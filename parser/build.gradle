@@ -6,10 +6,7 @@ buildscript {
         }
         jcenter()
     }
- 
-    dependencies {
-        classpath 'me.champeau.gradle:antlr4-gradle-plugin:0.1.1-SNAPSHOT'
-    }
+
 }
  
 repositories {
@@ -18,25 +15,20 @@ repositories {
 }
 
 apply plugin: 'java'
-apply plugin: 'me.champeau.gradle.antlr4'
+apply plugin: 'antlr'
 apply plugin: 'idea'
- 
-antlr4 {
-    source = file('src/main/antlr')
-    output = file('build/generated-src/me/tomassetti/antlr4/parser')
-    extraArgs = ['-package', 'me.tomassetti.antlr4.parser']
-}
- 
-compileJava.dependsOn antlr4
- 
-sourceSets.main.java.srcDirs += antlr4.output
- 
-configurations {
-    compile.extendsFrom antlr4
-}
+
 
 dependencies {
+    antlr "org.antlr:antlr4:4.5.1"
+    compile "org.antlr:antlr4-runtime:4.5.1"
     testCompile 'junit:junit:4.12'
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ['-package', 'me.tomassetti.antlr4.parser']
+    outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/me/tomassetti/antlr4/parser".toString())
 }
  
 task fatJar(type: Jar) {
